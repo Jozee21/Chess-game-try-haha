@@ -22,11 +22,20 @@ h1 {
 }
 
 .square {
-    width: 60px;
-    height: 60px;
-    background-color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 45px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .square:nth-child(odd) {
     background-color: #ddd;
+}
+
+.piece {
+    width: 60px;
+    height: 60px;
+    pointer-events: none; /* So clicks hit the square, not the image */
 }
