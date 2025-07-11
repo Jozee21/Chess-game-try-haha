@@ -1,66 +1,92 @@
 const chessboard = document.getElementById('chessboard');
-let selectedSquare = null; // Track the currently selected square
+let selectedSquare = null;
+let currentBoard = [];
+let currentTurn = "white";
 
-// Create a chessboard with alternating colors (Black and White)
-// Each square is a div with a class of 'square'
-function createChessboard() {
-    // places the initial chess pieces on the board
-    // Each piece is an image inside the square div
-    const pieceLayout = {
-        0: ["Black-rook", "Black-knight", "Black-bishop", "Black-queen", "Black-king", "Black-bishop", "Black-knight", "Black-rook"],
-        1: Array(8).fill("Black-pawn"),
-        6: Array(8).fill("White-pawn"),
-        7: ["White-rook", "White-knight", "White-bishop", "White-queen", "White-king", "White-bishop", "White-knight", "White-rook"]
-    };
+function pieceTypeName(char) {
+    switch (char) {
+        case 'P': return 'pawn';
+        case 'R': return 'rook';
+        case 'N': return 'knight';
+        case 'B': return 'bishop';
+        case 'Q': return 'queen';
+        case 'K': return 'king';
+    }
+}
 
+function renderBoard(board) {
+    chessboard.innerHTML = "";
     for (let row = 0; row < 8; row++) {
         for (let col = 0; col < 8; col++) {
             const square = document.createElement('div');
             square.classList.add('square');
-
             const isLight = (row + col) % 2 === 0;
             square.style.backgroundColor = isLight ? '#f0d9b5' : '#b58863';
 
             square.dataset.row = row;
             square.dataset.col = col;
 
-            // Place initial pieces
-            if (pieceLayout[row]) {
-                const pieceName = pieceLayout[row][col];
+            const pieceCode = board[row][col];
+            if (pieceCode) {
+                const color = pieceCode[0] === 'w' ? 'White' : 'Black';
+                const type = pieceTypeName(pieceCode[1]);
                 const img = document.createElement('img');
-                img.src = `assets/Chess pieces/${pieceName}.png`;
+                img.src = `assets/Chess pieces/${color}-${type}.png`;
                 img.classList.add('piece');
                 square.appendChild(img);
             }
 
-            // 🟡 Add click event to each square
             square.addEventListener('click', () => handleSquareClick(square));
-
             chessboard.appendChild(square);
         }
     }
 }
 
 function handleSquareClick(square) {
-    const hasPiece = square.querySelector('img');
-
-    if (selectedSquare === null && hasPiece) {
-        // First click: select square with piece
+    if (!selectedSquare && square.querySelector('img')) {
         selectedSquare = square;
         square.style.outline = '3px solid black';
-
-    } else if (selectedSquare) {
-        // Second click: move piece to new square
-        const piece = selectedSquare.querySelector('img');
-
-        if (piece) {
-            square.appendChild(piece); // Move the piece image
-        }
-
-        // Clear highlight and selection
+    } else if (selectedSquare && square !== selectedSquare) {
+        const fromRow = parseInt(selectedSquare.dataset.row);
+        const fromCol = parseInt(selectedSquare.dataset.col);
+        const toRow = parseInt(square.dataset.row);
+        const toCol = parseInt(square.dataset.col);
         selectedSquare.style.outline = 'none';
         selectedSquare = null;
+        sendMoveToBackend(fromRow, fromCol, toRow, toCol);
     }
 }
 
-createChessboard();
+async function sendMoveToBackend(fromRow, fromCol, toRow, toCol) {
+    const res = await fetch("http://localhost:8000/move", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ from_row: fromRow, from_col: fromCol, to_row: toRow, to_col: toCol })
+    });
+
+    const result = await res.json();
+    if (result.success) {
+        currentBoard = result.board;
+        currentTurn = result.turn;
+        renderBoard(currentBoard);
+        updateTurnDisplay();
+    } else {
+        alert(result.message);
+    }
+}
+
+async function fetchBoardFromBackend() {
+    const res = await fetch("http://localhost:8000/board");
+    const data = await res.json();
+    currentBoard = data.board;
+    currentTurn = data.turn;
+    renderBoard(currentBoard);
+    updateTurnDisplay();
+}
+
+function updateTurnDisplay() {
+    const display = document.getElementById('turnDisplay');
+    display.textContent = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
+}
+
+fetchBoardFromBackend();
