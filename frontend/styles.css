@@ -1,14 +1,7 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    margin: 0;
-    padding: 20px;
-}
-
-h1 {
-    color: #333;
+    background: #f0f0f0;
     text-align: center;
-    margin-bottom: 20px;
 }
 
 #chessboard {
@@ -22,20 +15,33 @@ h1 {
 }
 
 .square {
+    width: 60px;
+    height: 60px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-size: 45px;
-    font-weight: bold;
+    align-items: center;
+    position: relative;
     cursor: pointer;
 }
 
-.square:nth-child(odd) {
-    background-color: #ddd;
+.piece {
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
 }
 
-.piece {
-    width: 60px;
-    height: 60px;
-    pointer-events: none; /* So clicks hit the square, not the image */
+#turnDisplay {
+    margin-top: 10px;
+    font-size: 20px;
+    color: #333;
+}
+.square.white {
+    background-color: #fff;
+}
+.square.black {
+    background-color: #000;
+}
+.square.white .piece {
+    background-color: #fff;
+    color: #000;
 }
