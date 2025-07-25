@@ -65,15 +65,34 @@ async function sendMoveToBackend(fromRow, fromCol, toRow, toCol) {
     });
 
     const result = await res.json();
+
+    // Clear previous check highlights
+    document.querySelectorAll('.in-check').forEach(sq => sq.classList.remove('in-check'));
+
     if (result.success) {
         currentBoard = result.board;
         currentTurn = result.turn;
         renderBoard(currentBoard);
         updateTurnDisplay();
+
+        // Highlight the opponent's king if it's in check or checkmate
+        if (result.message.includes("Check")) {
+            const kingColor = currentTurn === "white" ? "Black" : "White";
+            highlightKingSquare(kingColor);
+        }
+
+        // Show check/checkmate message
+        if (result.message.includes("Checkmate")) {
+            alert("Checkmate!");
+        } else if (result.message.includes("Check")) {
+            alert("Check!");
+        }
+
     } else {
         alert(result.message);
     }
 }
+
 
 async function fetchBoardFromBackend() {
     const res = await fetch("http://localhost:8000/board");
@@ -87,6 +106,16 @@ async function fetchBoardFromBackend() {
 function updateTurnDisplay() {
     const display = document.getElementById('turnDisplay');
     display.textContent = `Turn: ${currentTurn.charAt(0).toUpperCase() + currentTurn.slice(1)}`;
+}
+
+function highlightKingSquare(color) {
+    const pieces = document.querySelectorAll('img');
+    for (const img of pieces) {
+        if (img.src.toLowerCase().includes(`${color.toLowerCase()}-king`)) {
+            img.parentElement.classList.add('in-check');
+            break;
+        }
+    }
 }
 
 fetchBoardFromBackend();
