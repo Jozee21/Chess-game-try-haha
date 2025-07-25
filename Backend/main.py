@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from .chess_logic import get_board, get_turn, move_piece
+from .chess_logic import restart_game
 
 app = FastAPI()
 
@@ -25,6 +26,16 @@ def read_board():
 @app.post("/move")
 def make_move(move: Move):
     return move_piece(move.from_row, move.from_col, move.to_row, move.to_col)
+
+@app.post("/restart")
+def restart():
+    restart_game()
+    return {
+        "success": True,
+        "board": get_board(),
+        "turn": get_turn(),
+        "message": "Game restarted."
+    }
 
 # Run the FastAPI server with:
 # uvicorn Backend.main:app --reload
