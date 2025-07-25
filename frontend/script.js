@@ -118,4 +118,20 @@ function highlightKingSquare(color) {
     }
 }
 
+document.getElementById('restartBtn').addEventListener('click', async () => {
+    const res = await fetch("http://localhost:8000/restart", {
+        method: "POST"
+    });
+    const result = await res.json();
+
+    if (result.success) {
+        currentBoard = result.board;
+        currentTurn = result.turn;
+        selectedSquare = null;
+        renderBoard(currentBoard);
+        updateTurnDisplay();
+        alert("Game restarted!");
+    }
+});
+
 fetchBoardFromBackend();
