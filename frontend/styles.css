@@ -63,3 +63,9 @@ body {
 #restartBtn:hover {
   background-color: #466cd9;
 }
+.square.selected {
+  outline: 3px solid black;
+  box-shadow: 0 0 8px black;
+  z-index: 1;
+  position: relative;
+}
