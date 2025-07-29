@@ -45,7 +45,8 @@ function renderBoard(board) {
 function handleSquareClick(square) {
     if (!selectedSquare && square.querySelector('img')) {
         selectedSquare = square;
-        square.style.outline = '3px solid black';
+        square.classList.add("selected");
+
     } else if (selectedSquare && square !== selectedSquare) {
         const fromRow = parseInt(selectedSquare.dataset.row);
         const fromCol = parseInt(selectedSquare.dataset.col);
@@ -77,7 +78,7 @@ async function sendMoveToBackend(fromRow, fromCol, toRow, toCol) {
 
         // Highlight the opponent's king if it's in check or checkmate
         if (result.message.includes("Check")) {
-            const kingColor = currentTurn === "white" ? "Black" : "White";
+            const kingColor = currentTurn === "White" ? "Black" : "White";
             highlightKingSquare(kingColor);
         }
 
