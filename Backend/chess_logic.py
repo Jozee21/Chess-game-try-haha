@@ -11,11 +11,11 @@ initial_board = [
 
 board = [row.copy() for row in initial_board]
 turn = "white"
-
 has_moved = {
     "wK": False, "wR0": False, "wR7": False,
     "bK": False, "bR0": False, "bR7": False
 }
+last_move = None
 
 def get_board():
     return board
@@ -94,6 +94,11 @@ def is_valid_pawn_move(fr, fc, tr, tc, piece):
         return True
     if abs(tc - fc) == 1 and tr == fr + dir and target and target[0] != piece[0]:
         return True
+    # En passant
+    if abs(tc - fc) == 1 and tr == fr + dir and target == "" and last_move:
+        lfr, lfc, ltr, ltc, lpiece = last_move
+        if lpiece[1] == "P" and abs(ltr - lfr) == 2 and ltr == fr and ltc == tc:
+            return True
     return False
 
 def is_valid_knight_move(fr, fc, tr, tc, piece):
@@ -192,11 +197,8 @@ def try_castling(fr, fc, tr, tc, piece):
         board[fr][fc] = piece
         board[row][c] = temp
 
-    # Move king
     board[tr][tc] = piece
     board[fr][fc] = ""
-
-    # Move rook
     rook_new_col = fc + 1 if king_side else fc - 1
     board[row][rook_new_col] = board[row][rook_col]
     board[row][rook_col] = ""
@@ -207,19 +209,18 @@ def try_castling(fr, fc, tr, tc, piece):
     return {"success": True, "message": "Castling executed!"}
 
 def move_piece(fr, fc, tr, tc):
-    global turn
+    global turn, last_move
     piece = board[fr][fc]
     if not piece:
         return {"success": False, "message": "No piece at source."}
     if (turn == "white" and piece[0] != "w") or (turn == "black" and piece[0] != "b"):
         return {"success": False, "message": f"It is {turn}'s turn."}
 
-    # Special castling
     if piece.endswith("K") and abs(fc - tc) == 2 and fr == tr:
         result = try_castling(fr, fc, tr, tc, piece)
         if result["success"]:
-            next_turn = "black" if turn == "white" else "white"
-            turn = next_turn
+            turn = "black" if turn == "white" else "white"
+            last_move = (fr, fc, tr, tc, piece)
             return {**result, "board": board, "turn": turn}
         else:
             return result
@@ -231,12 +232,14 @@ def move_piece(fr, fc, tr, tc):
     board[tr][tc] = piece
     board[fr][fc] = ""
 
+    if piece[1] == "P" and target == "" and fc != tc:
+        board[fr][tc] = ""
+
     if is_in_check(turn):
         board[fr][fc] = piece
         board[tr][tc] = target
         return {"success": False, "message": "You cannot leave your king in check."}
 
-    # Mark king/rook movement
     if piece == "wK":
         has_moved["wK"] = True
     elif piece == "bK":
@@ -250,6 +253,7 @@ def move_piece(fr, fc, tr, tc):
     elif piece == "bR" and fr == 0 and fc == 7:
         has_moved["bR7"] = True
 
+    last_move = (fr, fc, tr, tc, piece)
     next_turn = "black" if turn == "white" else "white"
     msg = "Move successful."
     if is_checkmate(next_turn):
@@ -261,10 +265,11 @@ def move_piece(fr, fc, tr, tc):
     return {"success": True, "board": board, "turn": turn, "message": msg}
 
 def restart_game():
-    global board, turn, has_moved
+    global board, turn, has_moved, last_move
     board = [row.copy() for row in initial_board]
     turn = "white"
     has_moved = {
         "wK": False, "wR0": False, "wR7": False,
         "bK": False, "bR0": False, "bR7": False
     }
+    last_move = None
