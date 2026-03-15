@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+# Initial Chess board
 initial_board = [
     ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
     ["bP"] * 8,
@@ -9,6 +12,7 @@ initial_board = [
     ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]
 ]
 
+# Global game state
 board = [row.copy() for row in initial_board]
 turn = "white"
 has_moved = {
@@ -23,6 +27,7 @@ def get_board():
 def get_turn():
     return turn
 
+# Helper functions for move validation and check/checkmate detection
 def find_king(color):
     target = color[0] + "K"
     for r in range(8):
@@ -31,6 +36,7 @@ def find_king(color):
                 return r, c
     return None
 
+# Check if a square is attacked by any enemy piece 
 def is_square_attacked(row, col, color):
     enemy = "b" if color == "white" else "w"
 
@@ -209,6 +215,7 @@ def try_castling(fr, fc, tr, tc, piece):
     return {"success": True, "message": "Castling executed!"}
 
 def move_piece(fr, fc, tr, tc):
+    notation = ""
     global turn, last_move
     piece = board[fr][fc]
     if not piece:
@@ -254,6 +261,31 @@ def move_piece(fr, fc, tr, tc):
         has_moved["bR7"] = True
 
     last_move = (fr, fc, tr, tc, piece)
+
+    #Notation generation 
+    from_square = f"{chr(fc + ord('a'))}{8 - fr}"
+    to_square = f"{chr(tc + ord('a'))}{8 - tr}"
+
+    # Castling
+    if piece[1] == "K" and abs(tc - fc) == 2:
+        notation = "O-O" if tc > fc else "O-O-O"
+    else:
+        symbol = {"P": "", "R": "R", "N": "N", "B": "B", "Q": "Q", "K": "K"}[piece[1]]
+        # capture
+        capture = "x" if target != "" or (piece[1] == "P" and fc != tc) else ""
+        if piece[1] == "P" and capture:
+            notation = from_square[0] + "x" + to_square
+        else:
+            notation = symbol + capture + to_square
+
+        # check / checkmate
+        next_turn = "black" if turn == "white" else "white"
+        if is_checkmate(next_turn):
+            notation += "#"
+        elif is_in_check(next_turn):
+            notation += "+"
+
+    
     next_turn = "black" if turn == "white" else "white"
     msg = "Move successful."
     if is_checkmate(next_turn):
@@ -262,7 +294,7 @@ def move_piece(fr, fc, tr, tc):
         msg = "Check!"
 
     turn = next_turn
-    return {"success": True, "board": board, "turn": turn, "message": msg}
+    return {"success": True, "board": board, "turn": turn, "message": msg, "notation": notation}
 
 def restart_game():
     global board, turn, has_moved, last_move
@@ -273,3 +305,42 @@ def restart_game():
         "bK": False, "bR0": False, "bR7": False
     }
     last_move = None
+
+global_board = None
+
+# def generate_algebraic_notation(piece, from_square, to_square,
+#                                  is_capture=False, is_castling=False,
+#                                  is_promotion=False, promotion_piece=None,
+#                                  is_check=False, is_mate=False):
+
+#     notation = ""
+#     if is_castling:
+#         return "O-O" if to_square in ("g1", "g8") else "O-O-O"
+
+#     symbols = {
+#         "pawn": "",
+#         "rook": "R",
+#         "knight": "N",
+#         "bishop": "B",
+#         "queen": "Q",
+#         "king": "K"
+#     }
+#     notation += symbols[piece]
+
+#     if is_capture:
+#         if piece == "pawn":
+#             notation += from_square[0]
+#         notation += "x"
+
+#     notation += to_square
+
+#     if is_promotion and promotion_piece:
+#         notation += "=" + promotion_piece[0].upper()
+
+#     if is_mate:
+#         notation += "#"
+#     elif is_check:
+#         notation += "+"
+
+#     return notation
+ 
