@@ -1,0 +1,201 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #e6ecf5, #cfd9e6);
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    margin-top: 20px;
+    font-size: 2.2rem;
+    color: #222;
+}
+
+#turnDisplay {
+    margin-top: 5px;
+    font-size: 1.2rem;
+    color: #555;
+}
+
+#chessboard {
+    display: grid;
+    grid-template-columns: repeat(8, 65px);
+    grid-template-rows: repeat(8, 65px);
+    width: 520px;
+    height: 520px;
+    margin: 20px auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border: 4px solid #333;
+}
+
+.square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.square.white {
+    background-color: #f0d9b5;
+}
+
+.square.black {
+    background-color: #b58863;
+}
+
+.square:hover {
+    filter: brightness(1.1);
+}
+
+.piece {
+    width: 52px;
+    height: 52px;
+    pointer-events: none;
+    transition: transform 0.2s ease;
+}
+
+.square:hover .piece {
+    transform: scale(1.05);
+}
+
+.square.selected {
+    border: 3px solid #222;
+    box-sizing: border-box;
+}
+
+.in-check {
+    outline: 3px solid red;
+    box-shadow: inset 0 0 10px red;
+}
+
+#containerChessboardAndNotation {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.notation-square {
+    width: 260px;
+    height: 520px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    overflow-y: auto;
+    text-align: left;
+}
+
+#notationAndAnalysis h3 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+}
+
+#notationList {
+    padding-left: 18px;
+}
+
+#notationList li {
+    margin-bottom: 6px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+#notationList li:hover {
+    background-color: #f2f2f2;
+}
+
+#restartBtn {
+    margin-top: 15px;
+    padding: 10px 18px;
+    font-size: 1rem;
+    background: linear-gradient(135deg, #5c8aff, #3f6de0);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+#restartBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+}
+
+#restartBtn:active {
+    transform: scale(0.97);
+}
+
+#saveBtn {
+    margin-top: 15px;
+    margin-left: 10px;
+    padding: 10px 18px;
+    font-size: 1rem;
+    background: linear-gradient(135deg, #4caf50, #388e3c);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+#saveBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+}
+
+#saveBtn:active {
+    transform: scale(0.97);
+}
+
+.button-group {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.last-move {
+    background-color:   rgba(161, 161, 151, 0.4);
+}
+
+.promotion-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 3px solid black;
+    border-radius: 15px;
+    padding: 20px 25px;
+    display: flex;
+    gap: 15px;
+    z-index: 9999; 
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+.promotion-popup button {
+    padding: 15px 20px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.1s ease;
+}
+
+.promotion-popup button:hover {
+    transform: scale(1.1);
+    background-color: #f0f0f0;
+}
