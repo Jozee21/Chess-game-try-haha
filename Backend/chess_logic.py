@@ -228,7 +228,8 @@ def move_piece(fr, fc, tr, tc, promotion=None):
         if result["success"]:
             turn = "black" if turn == "white" else "white"
             last_move = (fr, fc, tr, tc, piece)
-            return {**result, "board": board, "turn": turn}
+            notation = "O-O" if tc > fc else "O-O-O"
+            return {**result, "board": board, "turn": turn, "notation": notation}
         else:
             return result
 
@@ -359,6 +360,91 @@ global_board = None
 #         "king": "K"
 #     }
 #     notation += symbols[piece]
+
+#     if is_capture:
+#         if piece == "pawn":
+#             notation += from_square[0]
+#         notation += "x"
+
+#     notation += to_square
+
+#     if is_promotion and promotion_piece:
+#         notation += "=" + promotion_piece[0].upper()
+
+#     if is_mate:
+#         notation += "#"
+#     elif is_check:
+#         notation += "+"
+
+#     return notation
+
+#     if is_capture:
+#         if piece == "pawn":
+#             notation += from_square[0]
+#         notation += "x"
+
+#     notation += to_square
+
+#     if is_promotion and promotion_piece:
+#         notation += "=" + promotion_piece[0].upper()
+
+#     if is_mate:
+#         notation += "#"
+#     elif is_check:
+#         notation += "+"
+
+#     return notation
+
+#     if is_capture:
+#         if piece == "pawn":
+#             notation += from_square[0]
+#         notation += "x"
+
+#     notation += to_square
+
+#     if is_promotion and promotion_piece:
+#         notation += "=" + promotion_piece[0].upper()
+
+#     if is_mate:
+#         notation += "#"
+#     elif is_check:
+#         notation += "+"
+
+#     return notation
+
+#     if is_capture:
+#         if piece == "pawn":
+#             notation += from_square[0]
+#         notation += "x"
+
+#     notation += to_square
+
+#     if is_promotion and promotion_piece:
+#         notation += "=" + promotion_piece[0].upper()
+
+#     if is_mate:
+#         notation += "#"
+#     elif is_check:
+#         notation += "+"
+
+#     return notation
+
+#     if is_capture:
+#         if piece == "pawn":
+#             notation += from_square[0]
+#         notation += "x"
+
+#     notation += to_square
+
+#     if is_promotion and promotion_piece:
+#         notation += "=" + promotion_piece[0].upper()
+
+#     if is_mate:
+#         notation += "#"
+#     elif is_check:
+#         notation += "+"
+
+#     return notation
 
 #     if is_capture:
 #         if piece == "pawn":

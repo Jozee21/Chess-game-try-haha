@@ -8,7 +8,6 @@ from .chess_logic import (
     global_board
 )
 
-
 app = FastAPI()
 
 app.add_middleware(
@@ -68,4 +67,9 @@ def make_move(move_data: dict):
 
 # Run the FastAPI server with:
 # uvicorn Backend.main:app --reload
-# Run on TERMINAL
+
+# Run the FastAPI server with:
+# uvicorn Backend.main:app --reload
+
+# Run the FastAPI server with:
+# uvicorn Backend.main:app --reload
